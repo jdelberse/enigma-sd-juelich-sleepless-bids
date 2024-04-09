@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CPUS='1'
-RAM='8G'
+CPUS='4'
+RAM='32G'
 DISK='90G'
 
 ROOT=$(pwd)
@@ -9,7 +9,7 @@ LOGS=$ROOT/derivatives/logs
 CONTAINERS=/data/project/sleep_ENIGMA_deprivation/enigma-sd-glymphatic/containers/
 QSRIPREP=$CONTAINERS/images/bids/bids-qsiprep--0.20.0.sing
 WORK='/tmp'
-OUT=$ROOT/derivatives/qsriprep
+OUT=$ROOT/derivatives
 SYMLINK=$ROOT/.git/annex/objects
 
 # create the logs or out dir if it doesn't exist
@@ -40,6 +40,7 @@ for dir in $ROOT/sub-018; do
         --work-dir ${WORK} \
         ${ROOT} ${OUT} participant \
         --participant-label ${sub} \
+        --output-resolution 1 \
         --skip-bids-validation\n"
         printf "log       = ${LOGS}/\$(Cluster).\$(Process).${sub}.${ses}.log.txt\n"
         printf "output    = ${LOGS}/\$(Cluster).\$(Process).${sub}.${ses}.out.txt\n"
