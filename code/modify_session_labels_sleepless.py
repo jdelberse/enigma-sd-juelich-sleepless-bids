@@ -26,7 +26,7 @@ for sub in tsv.index:
     for ses in ses_labs.keys():
 
         # Loop over MRI directories
-        for dirs in ['anat', 'dwi']:
+        for dirs in ['anat', 'dwi', 'fmap']:
             root = f"{sub}/{ses}/{dirs}"
             if not os.path.exists(root):
                 continue
