@@ -40,8 +40,7 @@ for dir in $ROOT/sub-*; do
         --work-dir ${WORK} \
         ${ROOT} ${OUT} participant \
         --participant-label ${sub} \
-        --output-resolution 1 \
-        --skip-bids-validation\n"
+        --output-resolution 1 \n"
         printf "log       = ${LOGS}/\$(Cluster).\$(Process).${sub}.${ses}.log.txt\n"
         printf "output    = ${LOGS}/\$(Cluster).\$(Process).${sub}.${ses}.out.txt\n"
         printf "error     = ${LOGS}/\$(Cluster).\$(Process).${sub}.${ses}.err.txt\n"
