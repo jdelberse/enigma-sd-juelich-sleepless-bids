@@ -6,7 +6,7 @@ DISK='90G'
 
 ROOT=$(pwd)
 LOGS=$ROOT/derivatives/logs
-CONTAINERS=/data/project/sleep_ENIGMA_deprivation/enigma-sd-glymphatic/containers/
+CONTAINERS=/data/project/sleep_ENIGMA_glymphatic/enigma-sd/containers/
 QSRIPREP=$CONTAINERS/images/bids/bids-qsiprep--0.20.0.sing
 WORK='/tmp'
 OUT=$ROOT/derivatives
