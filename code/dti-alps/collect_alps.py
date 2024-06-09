@@ -16,13 +16,13 @@ out['dti-alps-sleep-deprivation'] = 0
 
 # Loop over subjects, collect DTI-ALPS data
 for sub in tsv.index:
-	bl_path = f"derivatives/{sub}/ses-bl/dwi/alps.stat/alps.csv"
+	bl_path = f"derivatives/alps/{sub}/ses-bl/alps.stat/alps.csv"
 	if os.path.exists(bl_path):
 		alps_bl = pd.read_csv(bl_path)['alps'].item()
 	else:
 		alps_bl = "n/a"
 
-	sd_path = f"derivatives/{sub}/ses-sd/dwi/alps.stat/alps.csv"
+	sd_path = f"derivatives/alps/{sub}/ses-sd/alps.stat/alps.csv"
 	if os.path.exists(sd_path):
 		alps_sd = pd.read_csv(sd_path)['alps'].item()
 	else:
