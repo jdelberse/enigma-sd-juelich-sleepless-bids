@@ -13,7 +13,7 @@ root = os.getcwd()
 qsi = f"{root}/derivatives/qsiprep"
 
 subs = pd.read_csv(f"{root}/participants.tsv", sep="\t")["participant_id"]
-sessions = ["ses-ebl", "ses-sd"]
+sessions = ["ses-bl", "ses-sd"]
 
 for sub in subs:
     print(f"Subject: {sub}")

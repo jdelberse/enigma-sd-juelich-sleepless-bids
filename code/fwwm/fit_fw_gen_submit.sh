@@ -25,7 +25,7 @@ executable     = $ROOT/code/fwwm/run_fit_fw_model.sh
 # loop over all subjects
 for dir in $ROOT/sub-*; do
 	sub=${dir#$ROOT/}
-    for ses in ses-ebl ses-sd; do
+    for ses in ses-bl ses-sd; do
         printf "arguments = $sub $ses \n"
         printf "log       = ${LOGS}/\$(Cluster).\$(Process).${sub}.${ses}.log.txt\n"
         printf "output    = ${LOGS}/\$(Cluster).\$(Process).${sub}.${ses}.out.txt\n"

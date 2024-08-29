@@ -20,8 +20,8 @@ subs = pd.read_csv(f"{root}/participants.tsv", sep="\t")["participant_id"]
 sessions = ["ses-ebl", "ses-sd"]
 
 # Scan suffixes
-dwi = f"{root}/derivatives/qsiprep/{sub}/{ses}/dwi/{sub}_{ses}_space-T1w"
-anat = f"{root}/derivatives/qsiprep/{sub}/{ses}/anat/{sub}_{ses}"
+dwi = f"{root}/derivatives/qsiprep/{sub}/{ses}/dwi/{sub}_{ses}_dir-AP_space-T1w"
+anat = f"{root}/derivatives/qsiprep/{sub}/{ses}/anat/{sub}"
 
 # Load DWI image and image data
 img = nib.load(f"{dwi}_desc-preproc_dwi.nii.gz")
