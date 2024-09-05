@@ -53,6 +53,7 @@ for sub in tsv.index:
 			pvsvf[ses] = pvs.loc[ses]['PVSVF']
 			print(f"PVS data for {ses} found at {pvs_path}")
 		else:
+			pvsvf[ses] = "n/a"
 			print("No PVS data found")
 
 		## CPVF
@@ -67,6 +68,7 @@ for sub in tsv.index:
 			cpvf[ses] = cp/icv # Calculate the CPVF
 			print(f"CPlex data for {ses} found at {stats_path}.csv")
 		else:
+			cpvf[ses] = "n/a"
 			print("No CPlex data found")
 		
 		## MFWI and RFWI
@@ -77,6 +79,8 @@ for sub in tsv.index:
 			rfwi[ses] = fwi.loc[ses, "rfwi"]
 			print(f"Mean and Relative Free water Index for {ses} found at {fwi_path}")
 		else:
+			mfwi[ses] = "n/a"
+			rfwi[ses] = "n/a"
 			print("No Free Water data found")
 
 		## ALPS
@@ -85,6 +89,7 @@ for sub in tsv.index:
 			alps[ses] = pd.read_csv(alps_path)['alps'].item()
 			print(f"ALPS data for {ses} data found at {alps_path}")
 		else:
+			alps[ses] = "n/a"
 			print("No ALPS data found")
 		
 		if ses == sessions[0]:
