@@ -13,6 +13,7 @@ root = os.getcwd()
 qsi = f"{root}/derivatives/qsiprep"
 
 subs = pd.read_csv(f"{root}/participants.tsv", sep="\t")["participant_id"]
+subs = subs.iloc[1:] # Drop the sub-008 due to lack of data
 sessions = ["ses-bl", "ses-sd"]
 
 for sub in subs:
@@ -24,7 +25,7 @@ for sub in subs:
         print(f"Session: {ses}")
 
         # Load FW scalar
-        fw = nib.load(f"{qsi}/{sub}/{ses}/dwi/{sub}_{ses}_space-T1w_FW.nii.gz")
+        fw = nib.load(f"{qsi}/{sub}/{ses}/dwi/{sub}_{ses}_dir-AP_space-T1w_FW.nii.gz")
         fw_data = fw.get_fdata()
         
         # Load WM mask
