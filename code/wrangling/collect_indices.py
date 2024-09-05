@@ -1,9 +1,11 @@
 ### Author: JD Elberse
 ### Date: 11/06/24
-### This code extracts PVSVF and DTI-ALPS indices from the derivatives folder
+### This code extracts glymphatic indices from the derivatives folder and adds them
+### to a new participants.tsv
 
 import os
 import pandas as pd
+root = os.getcwd()
 
 # Load, add sub-labels, set sub as index
 tsv = pd.read_csv("participants.tsv", sep="\t")
@@ -15,47 +17,90 @@ sessions = ["ses-bl","ses-sd"]
 
 # Create new output csv
 out = tsv
+## PVS Volume Fraction
 out['pvsvf-baseline'] = 0
 out['pvsvf-sleep-deprivation'] = 0
+
+## Choroid Plexus Volume Fraction
+out['cpvf-baseline'] = 0
+out['cpvf-sleep-deprivation'] = 0
+
+# Mean and Relative Free Water Volume
+out['mfwi-baseline'] = 0
+out['mfwi-sleep-deprivation'] = 0
+
+out['rfwi-baseline'] = 0
+out['rfwi-sleep-deprivation'] = 0
+
+## DTI-ALPS
 out['dti-alps-baseline'] = 0
 out['dti-alps-sleep-deprivation'] = 0
 
 # Loop over subjects, collect DTI-ALPS data
 for sub in tsv.index:
 	print(f"Processing {sub}")
-	pvs_path = f"derivatives/{pvs_source}/{sub}/pvs.stat.csv"
-	if os.path.exists(pvs_path):
-		print(f"PVS data found at {pvs_path}")
-		pvs = pd.read_csv(pvs_path).set_index("Session")
-		pvsvf_bl = pvs.loc[sessions[0]]['PVSVF']
-		pvsvf_sd = pvs.loc[sessions[1]]['PVSVF']
-	else:
-		print("No PVS data found")
-		pvsvf_bl = "n/a"
-		pvsvf_sd = "n/a"
+	pvsvf = {}
+	cpvf = {}
+	mfwi = {}
+	rfwi = {}
+	alps = {}
+	for ses in sessions:
 	
-	alps_bl_path = f"derivatives/alps/{sub}/{sessions[0]}/alps.stat/alps.csv"
-	if os.path.exists(alps_bl_path):
-		print(f"ALPS (baseline) data found at {alps_bl_path}")
-		alps_bl = pd.read_csv(alps_bl_path)['alps'].item()
-	else:
-		print("No ALPS (baseline) data found")
-		alps_bl = "n/a"
-	
-	alps_sd_path = f"derivatives/alps/{sub}/{sessions[1]}/alps.stat/alps.csv"
-	if os.path.exists(alps_sd_path):
-		print(f"ALPS (SD) data found at {alps_sd_path}")
-		alps_sd = pd.read_csv(alps_sd_path)['alps'].item()
-	else:
-		print("No ALPS (SD) data found")
-		alps_sd = "n/a"
-	
-	out.loc[sub, 'pvsvf-baseline'] = pvsvf_bl
-	out.loc[sub, 'pvsvf-sleep-deprivation'] = pvsvf_sd
-	out.loc[sub, 'dti-alps-baseline'] = alps_bl
-	out.loc[sub, 'dti-alps-sleep-deprivation'] = alps_sd
+		## PVSVF
+		pvs_path = f"derivatives/{pvs_source}/{sub}/pvs.stat.csv"
+		if os.path.exists(pvs_path):
+			pvs = pd.read_csv(pvs_path).set_index("Session")
+			pvsvf[ses] = pvs.loc[ses]['PVSVF']
+			print(f"PVS data for {ses} found at {pvs_path}")
+		else:
+			print("No PVS data found")
+
+		## CPVF
+		stats_path = f"derivatives/freesurfer/{sub}_{ses}/stats/aseg.stats"
+		if os.path.exists(stats_path):
+			stats = pd.read_csv(f"{stats_path}.csv") #Open aseg.stats
+			cp_left = stats.loc[stats["StructName"] == "Left-choroid-plexus"]["Volume_mm3"].item() # Left CP volume
+			cp_right = stats.loc[stats["StructName"] == "Right-choroid-plexus"]["Volume_mm3"].item() # Right CP volume
+			
+			cp = (cp_right + cp_left) / 2 # Take the average of left and right
+			icv = pvs.loc[ses]['ICV'] # Get the ICV from the PVS data file
+			cpvf[ses] = cp/icv # Calculate the CPVF
+			print(f"CPlex data for {ses} found at {stats_path}.csv")
+		else:
+			print("No CPlex data found")
+		
+		## MFWI and RFWI
+		fwi_path = f"derivatives/qsiprep/{sub}/fw.stat.csv"
+		if os.path.exists(fwi_path):
+			fwi = pd.read_csv(fwi_path).set_index("ses")
+			mfwi[ses] = fwi.loc[ses, "mfwi"]
+			rfwi[ses] = fwi.loc[ses, "rfwi"]
+			print(f"Mean and Relative Free water Index for {ses} found at {fwi_path}")
+		else:
+			print("No Free Water data found")
+
+		## ALPS
+		alps_path = f"derivatives/alps/{sub}/{ses}/alps.stat/alps.csv"
+		if os.path.exists(alps_path):
+			alps[ses] = pd.read_csv(alps_path)['alps'].item()
+			print(f"ALPS data for {ses} data found at {alps_path}")
+		else:
+			print("No ALPS data found")
+		
+		if ses == sessions[0]:
+			out.loc[sub, 'pvsvf-baseline'] = pvsvf[ses]
+			out.loc[sub, 'cpvf-baseline'] = cpvf[ses]
+			out.loc[sub, 'mfwi-baseline'] = mfwi[ses]
+			out.loc[sub, 'rfwi-baseline'] = rfwi[ses]
+			out.loc[sub, 'dti-alps-baseline'] = alps[ses]
+		else:
+			out.loc[sub, 'pvsvf-sleep-deprivation'] = pvsvf[ses]
+			out.loc[sub, 'cpvf-sleep-deprivation'] = cpvf[ses]
+			out.loc[sub, 'mfwi-sleep-deprivation'] = mfwi[ses]
+			out.loc[sub, 'rfwi-sleep-deprivation'] = rfwi[ses]
+			out.loc[sub, 'dti-alps-sleep-deprivation'] = alps[ses]
 	print(f"Finished!\n")
 
 out_path = "derivatives/participants_with_indices.tsv"
-out.to_csv("derivatives/participants_with_indices.tsv", sep='\t')
+out.to_csv(f"{root}/{out_path}", sep='\t')
 print(f"Saved to {out_path}.")
